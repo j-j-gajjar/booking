@@ -4,7 +4,7 @@ import 'package:booking/presentation/widgets/widget.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class VenueScreen extends StatelessWidget {
+class VenueScreen extends StatelessWidget with CommonMethod {
   VenueScreen({super.key});
 
   final GridController gridController = Get.put(GridController());
@@ -32,10 +32,14 @@ class VenueScreen extends StatelessWidget {
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
-                int rows = int.parse(rowsController.value.text);
-                int columns = int.parse(columnsController.value.text);
-                bool check = gridController.setGrid(rows, columns);
-                if (check) Get.toNamed(RoutesConstants.gridScreen);
+                if (rowsController.value.text.isNotEmpty || columnsController.value.text.isNotEmpty) {
+                  int rows = int.parse(rowsController.value.text);
+                  int columns = int.parse(columnsController.value.text);
+                  bool check = gridController.setGrid(rows, columns);
+                  if (check) Get.toNamed(RoutesConstants.gridScreen);
+                } else {
+                  showSnack(message: 'Please enter valid values');
+                }
               },
               child: const Text('Next'),
             ),

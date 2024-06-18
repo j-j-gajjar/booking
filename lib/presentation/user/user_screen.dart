@@ -33,9 +33,9 @@ class UserScreen extends StatelessWidget with CommonMethod {
             ElevatedButton(
               onPressed: () {
                 if (int.parse(seats.value.text) <= Get.find<GridController>().availableSeats()) {
-                  Get.find<GridController>().userSeats.value = int.parse(seats.value.text);
+                  Get.find<GridController>().setSeat(int.parse(seats.value.text));
                   seats.value.clear();
-                  Get.offNamed(RoutesConstants.gridScreen);
+                  Get.toNamed(RoutesConstants.gridScreen);
                 }
               },
               child: const Text('Next'),
