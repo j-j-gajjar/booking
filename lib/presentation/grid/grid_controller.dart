@@ -45,29 +45,33 @@ class GridController extends GetxController with CommonMethod {
 
   // Private method to handle user seat selection
   void _toggleUserContainer(int index) {
+    // If all user seats are selected and tap again, reset bookSeats
     if (userSeats.value == 0 && bookSeats.isNotEmpty) {
       userSeats.value = bookSeats.length;
       bookSeats.clear();
     }
 
+    // Calculate the number of seats to the end of the row from the current index
     int nextSeats = columns.value - (index % columns.value + 1);
 
+    // If the seat is already booked, unselect it and increase the available userSeats
     if (bookSeats.contains(index)) {
       bookSeats.remove(index);
       userSeats++;
       return;
     }
 
+    // Book the selected seat and decrease the available userSeats
     bookSeats.add(index);
     userSeats--;
 
-    // Select adjacent seats if available
+    // Select adjacent seats if available and userSeats are greater than 0
     for (int i = 1; i <= nextSeats && userSeats > 0; i++) {
       if (!unAvailableSeats.contains(index + i)) {
         bookSeats.add(index + i);
         userSeats--;
       } else {
-        break;
+        break; // Stop if the next seat is unavailable
       }
     }
   }
