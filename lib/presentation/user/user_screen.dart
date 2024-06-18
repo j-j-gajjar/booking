@@ -22,7 +22,7 @@ class UserScreen extends StatelessWidget with CommonMethod {
             const SizedBox(height: 20),
             CustomTextField(
               controller: seats.value,
-              labelText: 'how many seats ?',
+              labelText: 'How many seats do you want to book?',
               onChanged: (value) {
                 if (int.parse(value) > Get.find<GridController>().availableSeats()) {
                   showSnack(message: 'Not enough available seats');

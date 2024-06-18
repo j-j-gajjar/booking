@@ -26,7 +26,7 @@ class SummaryScreen extends StatelessWidget {
                 Text("Total Selected Seats: ${selectedSeats.length}"),
                 const SizedBox(height: 10),
                 const Text(
-                  'Selected Seats:',
+                  'Selected Seats No:',
                   style: TextStyle(fontSize: 20),
                 ),
                 Text(

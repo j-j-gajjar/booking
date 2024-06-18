@@ -12,16 +12,22 @@ class GridScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text('All Seats'),
       ),
+      // Using GetBuilder to handle state management for GridController
       body: GetBuilder<GridController>(
         init: Get.find<GridController>(),
         builder: (gridController) {
+          // Using Obx to update the UI when observable variables change
           return Obx(() {
             return Center(
               child: Column(
                 children: [
+                  // Header text indicating the mode (admin/user)
                   _buildHeaderText(gridController),
+                  // Display seat status row only for non-admin users
                   if (!gridController.isAdmin.value) _buildSeatStatusRow(),
+                  // Build the grid of seats
                   _buildSeatsGrid(gridController),
+                  // Submit button to save or proceed
                   _buildSubmitButton(gridController),
                 ],
               ),
@@ -32,12 +38,14 @@ class GridScreen extends StatelessWidget {
     );
   }
 
+  // Method to build header text based on admin/user mode
   Widget _buildHeaderText(GridController gridController) {
     return Text(
       gridController.isAdmin.value ? "Select Unavailable Seats" : "Select Seats: ${gridController.getUserSeats()}",
     );
   }
 
+  // Method to build the seat status row (Sold, Selected, Available)
   Widget _buildSeatStatusRow() {
     return Padding(
       padding: const EdgeInsets.all(22),
@@ -61,6 +69,7 @@ class GridScreen extends StatelessWidget {
     );
   }
 
+  // Method to build the grid of seats
   Widget _buildSeatsGrid(GridController gridController) {
     return Expanded(
       child: ListView(
@@ -81,6 +90,7 @@ class GridScreen extends StatelessWidget {
     );
   }
 
+  // Method to build rows of seats
   Widget _buildSeatRows(GridController gridController) {
     return Column(
       children: List.generate(gridController.rows.value, (rowIndex) {
@@ -105,6 +115,7 @@ class GridScreen extends StatelessWidget {
     );
   }
 
+  // Method to get the color of a seat based on its status
   Color _getSeatColor(GridController gridController, int index) {
     if (gridController.bookSeats.contains(index)) {
       return Colors.yellow;
@@ -115,6 +126,7 @@ class GridScreen extends StatelessWidget {
     }
   }
 
+  // Method to build the submit button with appropriate label
   Widget _buildSubmitButton(GridController gridController) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 22),

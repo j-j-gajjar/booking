@@ -34,8 +34,8 @@ class VenueScreen extends StatelessWidget {
               onPressed: () {
                 int rows = int.parse(rowsController.value.text);
                 int columns = int.parse(columnsController.value.text);
-                gridController.setGrid(rows, columns);
-                Get.toNamed(RoutesConstants.gridScreen);
+                bool check = gridController.setGrid(rows, columns);
+                if (check) Get.toNamed(RoutesConstants.gridScreen);
               },
               child: const Text('Next'),
             ),

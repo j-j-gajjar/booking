@@ -11,81 +11,117 @@ class GridController extends GetxController with CommonMethod {
   RxInt userSeats = 0.obs;
   RxBool isAdmin = true.obs;
 
-  void setGrid(int r, int c) {
+  // Method to set grid dimensions and reset unavailable seats
+  bool setGrid(int r, int c) {
     if (r < 1 || c < 1) {
       showSnack(message: 'Please enter valid rows and columns');
-      return;
+      return false;
     }
+    cleatSeats();
+
     rows.value = r;
     columns.value = c;
-    unAvailableSeats.clear();
+    return true;
   }
 
+  // Method to get the total number of user seats
   String getUserSeats() {
     return (userSeats.value + bookSeats.length).toString();
   }
 
+  // Method to calculate available seats
   int availableSeats() {
     return (rows.value * columns.value) - unAvailableSeats.length;
   }
 
+  // Method to toggle seat selection based on the user or admin role
   void toggleContainer(int index) {
     if (Get.previousRoute == '/userScreen') {
-      // USER
-
-      //check if seats == 0 and bookSeats != 0 then reset bookSeats
-      if (userSeats.value == 0 && bookSeats.isNotEmpty) {
-        userSeats.value = bookSeats.length;
-        bookSeats.clear();
-      }
-
-      int nextSeats = columns.value - (index % columns.value + 1);
-
-      if (bookSeats.contains(index)) {
-        bookSeats.remove(index);
-        userSeats++;
-        return;
-      } else {
-        bookSeats.add(index);
-        userSeats--;
-      }
-      for (int i = 1; i <= nextSeats && userSeats > 0; i++) {
-        if (!unAvailableSeats.contains(index + i)) {
-          bookSeats.add(index + i);
-          userSeats--;
-        } else {
-          break;
-        }
-      }
+      _toggleUserContainer(index);
     } else {
-      //ADMIN
-      if (selectedIndices.contains(index)) {
-        selectedIndices.remove(index);
+      _toggleAdminContainer(index);
+    }
+  }
+
+  // Private method to handle user seat selection
+  void _toggleUserContainer(int index) {
+    if (userSeats.value == 0 && bookSeats.isNotEmpty) {
+      userSeats.value = bookSeats.length;
+      bookSeats.clear();
+    }
+
+    int nextSeats = columns.value - (index % columns.value + 1);
+
+    if (bookSeats.contains(index)) {
+      bookSeats.remove(index);
+      userSeats++;
+      return;
+    }
+
+    bookSeats.add(index);
+    userSeats--;
+
+    // Select adjacent seats if available
+    for (int i = 1; i <= nextSeats && userSeats > 0; i++) {
+      if (!unAvailableSeats.contains(index + i)) {
+        bookSeats.add(index + i);
+        userSeats--;
       } else {
-        selectedIndices.add(index);
+        break;
       }
     }
   }
 
+  // Private method to handle admin seat selection
+  void _toggleAdminContainer(int index) {
+    if (selectedIndices.contains(index)) {
+      selectedIndices.remove(index);
+    } else {
+      selectedIndices.add(index);
+    }
+  }
+
+  // Method to submit seat selection based on the user or admin role
   void submit() {
     if (Get.previousRoute == '/userScreen') {
-      if (userSeats.value == 0 && bookSeats.isNotEmpty) {
-        unAvailableSeats.addAll(bookSeats);
-        List<int> selected = List.from(bookSeats);
-        bookSeats.clear();
-        Get.offNamed(
-          RoutesConstants.summaryScreen,
-          arguments: selected,
-        );
-      } else {
-        showSnack(message: 'Please select seats');
-      }
+      _submitUserSelection();
     } else {
-      unAvailableSeats.clear();
-      unAvailableSeats.addAll(selectedIndices);
-      selectedIndices.clear();
-      Get.offNamed(RoutesConstants.userScreen);
-      isAdmin.value = false;
+      _submitAdminSelection();
     }
+  }
+
+  // Private method to handle user seat selection submission
+  void _submitUserSelection() {
+    if (userSeats.value == 0 && bookSeats.isNotEmpty) {
+      unAvailableSeats.addAll(bookSeats);
+      List<int> selected = List.from(bookSeats);
+      bookSeats.clear();
+      Get.offNamed(
+        RoutesConstants.summaryScreen,
+        arguments: selected,
+      );
+    } else {
+      showSnack(message: 'Please select seats');
+    }
+  }
+
+  // Private method to handle admin seat selection submission
+  void _submitAdminSelection() {
+    // check not select all seats
+    if (rows.value * columns.value == selectedIndices.length) {
+      showSnack(message: 'Please leave at least one seat');
+      return;
+    }
+
+    unAvailableSeats.clear();
+    unAvailableSeats.addAll(selectedIndices);
+    selectedIndices.clear();
+    Get.offNamed(RoutesConstants.userScreen);
+    isAdmin.value = false;
+  }
+
+  void cleatSeats() {
+    unAvailableSeats.clear();
+    selectedIndices.clear();
   }
 }
