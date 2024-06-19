@@ -127,6 +127,7 @@ class GridController extends GetxController with CommonMethod {
   void cleatSeats() {
     unAvailableSeats.clear();
     selectedIndices.clear();
+    isAdmin.value = true;
   }
 
   setSeat(int seat) {
