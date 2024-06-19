@@ -67,7 +67,7 @@ class GridController extends GetxController with CommonMethod {
 
     // Select adjacent seats if available and userSeats are greater than 0
     for (int i = 1; i <= nextSeats && userSeats > 0; i++) {
-      if (!unAvailableSeats.contains(index + i)) {
+      if (!unAvailableSeats.contains(index + i) && !bookSeats.contains(index + i)) {
         bookSeats.add(index + i);
         userSeats--;
       } else {
